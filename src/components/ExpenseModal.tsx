@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
-import { Columns3Cog } from 'lucide-react';
 
 interface ExpenseModalProps {
   isOpen: boolean;
