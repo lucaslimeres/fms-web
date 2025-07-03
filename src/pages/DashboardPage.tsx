@@ -53,7 +53,8 @@ const DashboardPage: React.FC = () => {
             try {
                 const response = await api.get('/dashboard', {
                     params: { monthYear: selectedMonth }
-                });
+                });             
+
                 setSummaryData(response.data.summary);
                 setByResponsible(response.data.byResponsible);
                 setRecentExpenses(response.data.recent);
@@ -103,28 +104,28 @@ const DashboardPage: React.FC = () => {
                             <div className="p-3 rounded-full bg-red-100"><ArrowDown className="text-red-500" /></div>
                             <div className="ml-4">
                                 <p className="text-gray-500">Total Despesas (Mês)</p>
-                                <p className="text-2xl font-bold text-gray-800">R$ {summaryData.totalExpenses}</p>
+                                <p className="text-2xl font-bold text-gray-800">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+summaryData.totalExpenses)}</p>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-xl shadow-md flex items-center">
                             <div className="p-3 rounded-full bg-yellow-100"><TriangleAlert className="text-yellow-500" /></div>
                             <div className="ml-4">
                                 <p className="text-gray-500">Pendentes</p>
-                                <p className="text-2xl font-bold text-gray-800">R$ {summaryData.pending}</p>
+                                <p className="text-2xl font-bold text-gray-800">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+summaryData.pending)}</p>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-xl shadow-md flex items-center">
                             <div className="p-3 rounded-full bg-green-100"><Check className="text-green-500" /></div>
                             <div className="ml-4">
                                 <p className="text-gray-500">Pagas</p>
-                                <p className="text-2xl font-bold text-gray-800">R$ {summaryData.paid}</p>
+                                <p className="text-2xl font-bold text-gray-800">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+summaryData.paid)}</p>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-xl shadow-md flex items-center">
                             <div className="p-3 rounded-full bg-blue-100"><CreditCardIcon className="text-blue-500" /></div>
                             <div className="ml-4">
                                 <p className="text-gray-500">Fatura Cartões</p>
-                                <p className="text-2xl font-bold text-gray-800">R$ {summaryData.cardBill}</p>
+                                <p className="text-2xl font-bold text-gray-800">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+summaryData.cardBill)}</p>
                             </div>
                         </div>
                     </div>
@@ -140,7 +141,7 @@ const DashboardPage: React.FC = () => {
                                         <div key={item.name}>
                                             <div className="flex justify-between mb-1">
                                                 <span className="text-base font-medium text-gray-600">{item.name}</span>
-                                                <span className="text-base font-medium text-gray-600">R$ {parseFloat(item.total.toString()).toFixed(2)}</span>
+                                                <span className="text-base font-medium text-gray-600">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+item.total)}</span>
                                             </div>
                                             <div className="w-full bg-gray-200 rounded-full h-4">
                                                 <div 
@@ -168,7 +169,7 @@ const DashboardPage: React.FC = () => {
                                                 <p className="text-sm text-gray-500">{expense.category_name}</p>
                                             </div>
                                         </div>
-                                        <span className="font-semibold text-red-600">- R$ {parseFloat(expense.amount.toString()).toFixed(2)}</span>
+                                        <span className="font-semibold text-red-600">- {new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+expense.amount)}</span>
                                     </li>
                                 ))}
                                 {recentExpenses.length === 0 && <p className="text-gray-500">Nenhuma despesa recente.</p>}

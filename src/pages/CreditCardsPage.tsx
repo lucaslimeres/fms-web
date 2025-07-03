@@ -129,7 +129,7 @@ const CreditCardsPage: React.FC = () => {
                                 <div className="flex items-center gap-4 sm:gap-6">
                                     <div className="text-right">
                                         <p className="text-gray-500 text-sm">Fatura</p>
-                                        <p className="font-bold text-xl text-red-500">R$ {fatura.total}</p>
+                                        <p className="font-bold text-xl text-red-500">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+fatura.total)}</p>
                                     </div>
                                     <span className={`${getStatusClass(fatura.status)} text-sm font-medium px-3 py-1 rounded-full`}>{fatura.status}</span>
                                     <div className="flex flex-col sm:flex-row gap-2">
@@ -167,7 +167,7 @@ const CreditCardsPage: React.FC = () => {
                                                         <td className="px-6 py-4 font-medium text-gray-900">{exp.description}</td>
                                                         <td className="px-6 py-4">{exp.responsible_name}</td>
                                                         <td className="px-6 py-4">{exp.category_name}</td>
-                                                        <td className="px-6 py-4 text-right font-medium">R$ {parseFloat(exp.amount).toFixed(2)}</td>
+                                                        <td className="px-6 py-4 text-right font-medium">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+exp.amount)}</td>
                                                     </tr>
                                                 ))
                                             ) : (

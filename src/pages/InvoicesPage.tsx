@@ -129,8 +129,8 @@ const InvoicesPage: React.FC = () => {
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-800">{responsible.name}</h3>
                                         <div className="flex gap-4 text-sm text-gray-500">
-                                            <p>Total: <span className="font-semibold text-red-500">R$ {total.toFixed(2)}</span></p>
-                                            <p>Pendente: <span className="font-semibold text-yellow-600">R$ {pending.toFixed(2)}</span></p>
+                                            <p>Total: <span className="font-semibold text-red-500">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+total)}</span></p>
+                                            <p>Pendente: <span className="font-semibold text-yellow-600">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+pending)}</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@ const InvoicesPage: React.FC = () => {
                                                         <tr key={exp.expense_id} className="bg-white border-b">
                                                             <td className="px-6 py-4 font-medium text-gray-900">{exp.description}</td>
                                                             <td className="px-6 py-4">{exp.category_name}</td>
-                                                            <td className="px-6 py-4">R$ {parseFloat(exp.amount).toFixed(2)}</td>
+                                                            <td className="px-6 py-4">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+exp.amount)}</td>
                                                             <td className="px-6 py-4">
                                                                 {exp.status === 'paid' 
                                                                     ? <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Pago</span>
@@ -188,7 +188,7 @@ const InvoicesPage: React.FC = () => {
                                                             <div className="flex items-center gap-3"><CreditCard className="text-blue-800" /><span className="font-semibold text-gray-700">{card.card_name}</span></div>
                                                             <div className="flex items-center gap-4">
                                                                 <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{card.status}</span>
-                                                                <span className="text-gray-600 font-semibold">Total: R$ {card.total.toFixed(2)}</span>
+                                                                <span className="text-gray-600 font-semibold">Total: {new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+card.total)}</span>
                                                                 <ChevronDown className={`transition-transform ${openNestedAccordion === card.card_id ? 'rotate-180' : ''}`} />
                                                             </div>
                                                         </button>

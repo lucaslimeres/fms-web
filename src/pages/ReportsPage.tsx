@@ -120,16 +120,16 @@ const ReportsPage: React.FC = () => {
                 <div className="bg-white p-6 rounded-xl shadow-md mb-8">
                     <h3 className="text-xl font-semibold text-gray-700 mb-4">Composição das Despesas por Categoria</h3>
                     <div className="space-y-4">
-                        {categorySummary.map((cat, index) => {
+                        {categorySummary.sort((a, b) => b.total - a.total).map((cat, index) => {
                             const percentage = totalExpenses > 0 ? (cat.total / totalExpenses) * 100 : 0;
                             return (
                                 <div key={cat.name}>
                                     <div className="flex justify-between mb-1">
                                         <span className="text-base font-medium text-gray-600">{cat.name}</span>
-                                        <span className="text-sm font-medium text-gray-600">R$ {cat.total.toFixed(2)} ({percentage.toFixed(1)}%)</span>
+                                        <span className="text-sm font-medium text-gray-600">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+cat.total)} ({percentage.toFixed(1)}%)</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div className={`${barColors[index % barColors.length]} h-2.5 rounded-full`} style={{ width: `${percentage}%` }}></div>
+                                        <div className={`${barColors[index % barColors.length]} h-2.5 rounded-full`} style={{ width: `${percentage > 0 ? percentage : 0}%` }}></div>
                                     </div>
                                 </div>
                             )
@@ -142,7 +142,7 @@ const ReportsPage: React.FC = () => {
                 <div className="bg-white p-6 rounded-xl shadow-md">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-semibold text-gray-700">Detalhes das Despesas</h3>
-                        <p className="font-bold text-lg text-red-500">Total: R$ {totalExpenses.toFixed(2)}</p>
+                        <p className="font-bold text-lg text-red-500">Total: {new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+totalExpenses)}</p>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left text-gray-500">
@@ -162,7 +162,7 @@ const ReportsPage: React.FC = () => {
                                         <td className="px-6 py-4 font-medium text-gray-900">{exp.description}</td>
                                         <td className="px-6 py-4">{exp.responsible_name || exp.group_name}</td>
                                         <td className="px-6 py-4">{exp.category_name}</td>
-                                        <td className="px-6 py-4 text-right font-medium">R$ {parseFloat(exp.amount).toFixed(2)}</td>
+                                        <td className="px-6 py-4 text-right font-medium">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+exp.amount)}</td>
                                     </tr>
                                 ))}
                             </tbody>
