@@ -31,7 +31,7 @@ const MainLayout: React.FC = () => {
     <div className="flex h-screen bg-gray-100">
       <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-800 text-white transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h1 className="text-2xl font-bold">Finanças+</h1>
+          <h1 className="text-2xl font-bold">FMS Application</h1>
           <button onClick={() => setSidebarOpen(false)} className="md:hidden"><X size={24} /></button>
         </div>
         <nav className="p-4">
