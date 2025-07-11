@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
     ArrowDown, TriangleAlert, Check, CreditCard as CreditCardIcon, Plus, 
     Utensils, Home, HeartPulse, Car, Tag 
 } from 'lucide-react';
 import api from '../services/api';
+import ExpenseModal from '../components/ExpenseModal';
 
 // Tipagem para os novos dados
 interface ResponsibleSummary {
@@ -42,12 +43,13 @@ const DashboardPage: React.FC = () => {
     const [recentExpenses, setRecentExpenses] = useState<RecentExpense[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [editingExpense, setEditingExpense] = useState<any | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     const now = new Date();
     const [selectedMonth, setSelectedMonth] = useState(`${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`);
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
+    const fetchDashboardData = useCallback(async () => {
             setLoading(true);
             setError(null);
             try {
@@ -64,10 +66,20 @@ const DashboardPage: React.FC = () => {
             } finally {
                 setLoading(false);
             }
-        };
+        }, [selectedMonth]);
 
+    useEffect(() => {fetchDashboardData()}, [selectedMonth]);
+    
+    const handleOpenCreateModal = () => {
+        setEditingExpense(null);
+        setIsModalOpen(true);
+    };
+
+    const handleSave = () => {
+        setIsModalOpen(false);
+        setEditingExpense(null);
         fetchDashboardData();
-    }, [selectedMonth]);
+    };  
     
     const totalResponsibleExpenses = useMemo(() => {
         return byResponsible.reduce((acc, item) => acc + Number(item.total), 0);
@@ -75,35 +87,42 @@ const DashboardPage: React.FC = () => {
     
     return (
         <>
-            <header className="flex flex-wrap justify-between items-center mb-8 gap-4">
+            <ExpenseModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSave={handleSave}
+                expenseToEdit={editingExpense}
+            />
+
+            <header className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
                     <p className="text-gray-500">Resumo geral das suas finanças.</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 w-full md:w-auto">
                     <input 
                         type="month"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-semibold w-full flex-1"
                     />
-                    <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 flex items-center transition-colors">
+                    <button onClick={handleOpenCreateModal} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 flex items-center transition-colors">
                         <Plus size={20} className="mr-2" />
-                        Nova Despesa
+                        <span className="hidden sm:inline">Nova Despesa</span>
                     </button>
                  </div>
-            </header>
+            </header>            
             
             {loading && <div className="text-center p-4">Carregando...</div>}
             {error && <div className="text-center p-4 bg-red-100 text-red-700 rounded-lg">{error}</div>}
 
             {!loading && !error && (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div className="bg-white p-6 rounded-xl shadow-md flex items-center">
                             <div className="p-3 rounded-full bg-red-100"><ArrowDown className="text-red-500" /></div>
                             <div className="ml-4">
-                                <p className="text-gray-500">Total Despesas (Mês)</p>
+                                <p className="text-gray-500">Total Despesas</p>
                                 <p className="text-2xl font-bold text-gray-800">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+summaryData.totalExpenses)}</p>
                             </div>
                         </div>
@@ -131,7 +150,6 @@ const DashboardPage: React.FC = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Despesas por Responsável (AGORA DINÂMICO) */}
                         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
                             <h3 className="text-xl font-semibold text-gray-700 mb-4">Despesas por Responsável</h3>
                             <div className="space-y-4">
@@ -155,8 +173,6 @@ const DashboardPage: React.FC = () => {
                                 {byResponsible.length === 0 && <p className="text-gray-500">Nenhuma despesa encontrada para este mês.</p>}
                             </div>
                         </div>
-
-                        {/* Despesas Recentes (AGORA DINÂMICO) */}
                         <div className="bg-white p-6 rounded-xl shadow-md">
                             <h3 className="text-xl font-semibold text-gray-700 mb-4">Despesas Recentes</h3>
                             <ul className="space-y-4">

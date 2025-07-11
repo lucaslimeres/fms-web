@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import api from '../services/api';
 
 // Tipos para os dados
@@ -26,38 +26,39 @@ const ReportsPage: React.FC = () => {
     const [selectedMonth, setSelectedMonth] = useState(`${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`);
     const [selectedResponsible, setSelectedResponsible] = useState('all');
 
-    useEffect(() => {
-        // Busca a lista de responsáveis para o filtro
-        const fetchResponsibles = async () => {
-            try {
-                const response = await api.get('/responsibles');
-                setResponsibles(response.data.map((r: any) => ({ id: r.id, name: r.name })));
-            } catch (error) {
-                console.error("Erro ao buscar responsáveis:", error);
-            }
-        };
-        fetchResponsibles();
+    const fetchResponsibles = useCallback(async () => {
+        try {
+            const response = await api.get('/responsibles');
+            setResponsibles(response.data.map((r: any) => ({ id: r.id, name: r.name })));
+        } catch (error) {
+            console.error("Erro ao buscar responsáveis:", error);
+        }
     }, []);
 
-    useEffect(() => {
-        const fetchExpenses = async () => {
-            setLoading(true);
-            try {
-                const params: any = { monthYear: selectedMonth };
-                if (selectedResponsible !== 'all') {
-                    params.responsibleId = selectedResponsible;
-                }
-
-                const response = await api.get('/expenses', { params });
-                setExpenses(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar despesas:", error);
-            } finally {
-                setLoading(false);
+    const fetchExpenses = useCallback(async () => {
+        setLoading(true);
+        try {
+            const params: any = { monthYear: selectedMonth };
+            if (selectedResponsible !== 'all') {
+                params.responsibleId = selectedResponsible;
             }
-        };
-        fetchExpenses();
+
+            const response = await api.get('/expenses', { params });
+            setExpenses(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar despesas:", error);
+        } finally {
+            setLoading(false);
+        }
     }, [selectedMonth, selectedResponsible]);
+
+    useEffect(() => {
+        fetchResponsibles();
+    }, [fetchResponsibles]);
+
+    useEffect(() => {
+        fetchExpenses();
+    }, [fetchExpenses]);
 
     const categorySummary = useMemo(() => {
         const summary = expenses.reduce((acc, expense) => {
@@ -70,7 +71,7 @@ const ReportsPage: React.FC = () => {
             return acc;
         }, {} as Record<string, number>);
 
-        return Object.entries(summary).map(([name, total]) => ({ name, total }));
+        return Object.entries(summary).map(([name, total]) => ({ name, total })).sort((a,b) => b.total - a.total);
     }, [expenses]);
     
     const totalExpenses = useMemo(() => {
@@ -120,7 +121,7 @@ const ReportsPage: React.FC = () => {
                 <div className="bg-white p-6 rounded-xl shadow-md mb-8">
                     <h3 className="text-xl font-semibold text-gray-700 mb-4">Composição das Despesas por Categoria</h3>
                     <div className="space-y-4">
-                        {categorySummary.sort((a, b) => b.total - a.total).map((cat, index) => {
+                        {categorySummary.map((cat, index) => {
                             const percentage = totalExpenses > 0 ? (cat.total / totalExpenses) * 100 : 0;
                             return (
                                 <div key={cat.name}>
@@ -129,7 +130,7 @@ const ReportsPage: React.FC = () => {
                                         <span className="text-sm font-medium text-gray-600">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+cat.total)} ({percentage.toFixed(1)}%)</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div className={`${barColors[index % barColors.length]} h-2.5 rounded-full`} style={{ width: `${percentage > 0 ? percentage : 0}%` }}></div>
+                                        <div className={`${barColors[index % barColors.length]} h-2.5 rounded-full`} style={{ width: `${percentage}%` }}></div>
                                     </div>
                                 </div>
                             )
@@ -140,7 +141,7 @@ const ReportsPage: React.FC = () => {
 
                 {/* Lista de Despesas */}
                 <div className="bg-white p-6 rounded-xl shadow-md">
-                    <div className="flex justify-between items-center mb-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
                         <h3 className="text-xl font-semibold text-gray-700">Detalhes das Despesas</h3>
                         <p className="font-bold text-lg text-red-500">Total: {new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+totalExpenses)}</p>
                     </div>
@@ -158,11 +159,11 @@ const ReportsPage: React.FC = () => {
                             <tbody className="divide-y">
                                 {expenses.map((exp) => (
                                     <tr key={exp.expense_id} className="bg-white">
-                                        <td className="px-6 py-4">{new Date(exp.reference_date).toLocaleDateString()}</td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">{exp.description}</td>
-                                        <td className="px-6 py-4">{exp.responsible_name || exp.group_name}</td>
-                                        <td className="px-6 py-4">{exp.category_name}</td>
-                                        <td className="px-6 py-4 text-right font-medium">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+exp.amount)}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{new Date(exp.reference_date).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{exp.description}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{exp.responsible_name || exp.group_name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{exp.category_name}</td>
+                                        <td className="px-6 py-4 text-right font-medium whitespace-nowrap">{new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+exp.amount)}</td>
                                     </tr>
                                 ))}
                             </tbody>
