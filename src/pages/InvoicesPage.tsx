@@ -77,10 +77,21 @@ const InvoicesPage: React.FC = () => {
         setOpenNestedAccordion(openNestedAccordion === id ? null : id);
     };
 
+    const getStatusClass = (status: string) => {
+        switch (status) {
+            case 'Fatura Paga':
+                return 'bg-green-100 text-green-800';
+            case 'Sem Gastos':
+                return 'bg-gray-100 text-gray-700';
+            default:
+                return 'bg-yellow-100 text-yellow-800';
+        }
+    };    
+
     const totalAmount = useMemo(() => {
         return invoices.map(invoice => {
-            const { bills, cardExpenses, groupExpenses } = invoice;
-            const allExpenses = [...bills, ...groupExpenses, ...cardExpenses.flatMap((c: any) => c.expenses)];
+            const { bills, cardExpenses } = invoice;
+            const allExpenses = [...bills, ...cardExpenses.flatMap((c: any) => c.expenses)];
             const total = allExpenses.reduce((acc, exp) => acc + parseFloat(exp.amount), 0);
             const pending = allExpenses.filter(e => e.status === 'pending').reduce((acc, exp) => acc + parseFloat(exp.amount), 0);
             return { total, pending };
@@ -118,7 +129,7 @@ const InvoicesPage: React.FC = () => {
             {loading && <p>Carregando faturas...</p>}
             
             <div className="space-y-4">
-                {invoices.map(({ responsible, bills, cardExpenses, groupExpenses }, index) => {
+                {invoices.map(({ responsible, bills, cardExpenses }, index) => {
                     const { total, pending } = totalAmount[index] || { total: 0, pending: 0 };
                     
                     return (
@@ -154,7 +165,7 @@ const InvoicesPage: React.FC = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {[...bills, ...groupExpenses].map((exp: any) => (
+                                                    {[...bills].map((exp: any) => (
                                                         <tr key={exp.expense_id} className="bg-white border-b">
                                                             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{exp.description}</td>
                                                             <td className="px-6 py-4 whitespace-nowrap">{exp.category_name}</td>
@@ -187,7 +198,7 @@ const InvoicesPage: React.FC = () => {
                                                         <button onClick={() => toggleNestedAccordion(card.card_id)} className="w-full flex justify-between items-center p-4 text-left">
                                                             <div className="flex items-center gap-3"><CreditCard className="text-blue-800" /><span className="font-semibold text-gray-700">{card.card_name}</span></div>
                                                             <div className="flex items-center gap-4">
-                                                                <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{card.status}</span>
+                                                                <span className={`${getStatusClass(card.status)} text-xs font-medium px-2.5 py-0.5 rounded-full`}>{card.status}</span>
                                                                 <span className="text-gray-600 font-semibold">Total: {new Intl.NumberFormat('pt-BR', {style: 'currency',currency: 'BRL'}).format(+card.total)}</span>
                                                                 <ChevronDown className={`transition-transform ${openNestedAccordion === card.card_id ? 'rotate-180' : ''}`} />
                                                             </div>
