@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://fms-api-production.up.railway.app',
+  baseURL: import.meta.env.VITE_API_URL || 'http://56.125.111.250:3000',
 });
 
 // Interceptador para adicionar o token JWT a cada requisição
