@@ -11,13 +11,24 @@ import UsersPage from './pages/UsersPage';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute'; // NOVO
 import MainLayout from './components/MainLayout';
+import LandingPage from './pages/LandingPage';
+import LoginRoute from './components/LoginRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route 
+            path="/Login"
+            element={
+              <LoginRoute>
+                <LoginPage />
+              </LoginRoute>
+            }
+          ></Route>
+
+          <Route path="/" element={<LandingPage />} />
           
           <Route 
             path="/"
@@ -28,13 +39,10 @@ function App() {
             }
           >
 
-            {/* Rotas Públicas (para usuários logados) */}
-            <Route index element={<DashboardPage />} />
+            <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/cards" element={<CreditCardsPage />} />
             <Route path="/reports" element={<ReportsPage />} />
-
-            {/* Rotas Administrativas */}
             <Route path="/categories" element={<AdminRoute><CategoriesPage /></AdminRoute>} />
             <Route path="/responsibles" element={<AdminRoute><ResponsiblesPage /></AdminRoute>} />
             <Route path="/users" element={<AdminRoute><UsersPage /></AdminRoute>} />

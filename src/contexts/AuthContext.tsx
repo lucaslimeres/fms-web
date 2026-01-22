@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     
     setUser(userData);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const signOut = () => {

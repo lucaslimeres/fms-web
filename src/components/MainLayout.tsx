@@ -10,7 +10,7 @@ const MainLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/', adminOnly: false },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', adminOnly: false },
     { icon: Wallet, label: 'Contas e Faturas', path: '/invoices', adminOnly: false },
     { icon: CreditCard, label: 'Cartões de Crédito', path: '/cards', adminOnly: false },
     { icon: BarChart3, label: 'Relatórios', path: '/reports', adminOnly: false },
