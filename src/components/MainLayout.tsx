@@ -37,7 +37,7 @@ const MainLayout: React.FC = () => {
           <button onClick={() => setSidebarOpen(false)} className="md:hidden ml-auto text-gray-300 hover:text-teal-500 transition-colors"><X size={32}/></button>
         </div>
         
-        <nav className="flex-1 p-8 space-y-3 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 p-8 space-y-3 overflow-y-auto custom-scrollbar" style={{ scrollbarWidth: 'thin', scrollbarColor: '#38b2ac #f0fff4' }}>
           {navItems.map((item) => (
             item.admin && user?.role !== 'admin' ? null : (
               <NavLink 
