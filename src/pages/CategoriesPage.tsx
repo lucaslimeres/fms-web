@@ -60,43 +60,64 @@ const CategoriesPage: React.FC = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSave}
                 itemToEdit={editingCategory}
-                title={editingCategory ? 'Editar Categoria' : 'Nova Categoria'}
+                title={editingCategory ? 'Editar Tag' : 'Nova Tag'}
                 label="Nome da Categoria"
             />
-            <header className="flex flex-wrap justify-between items-center mb-8 gap-4">
-                <div>
-                    <h2 className="text-3xl font-bold text-gray-800">Gerenciar Categorias</h2>
-                    <p className="text-gray-500">Adicione, edite ou remova categorias de despesas.</p>
-                </div>
-                <button onClick={() => { setEditingCategory(null); setIsModalOpen(true); }} className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 flex items-center">
-                    <Plus size={20} className="mr-2" />
-                    Nova Categoria
-                </button>
-            </header>
 
-            {loading ? <p>Carregando categorias...</p> : (
-                <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                    <table className="w-full text-sm text-left text-gray-500">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" className="px-6 py-3">Nome da Categoria</th>
-                                <th scope="col" className="px-6 py-3 text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {categories.map(cat => (
-                                <tr key={cat.id} className="bg-white">
-                                    <td className="px-6 py-4 font-medium text-gray-900">{cat.name}</td>
-                                    <td className="px-6 py-4 text-right space-x-4">
-                                        <button onClick={() => { setEditingCategory(cat); setIsModalOpen(true); }} className="text-blue-600 hover:text-blue-800" title="Editar"><Pencil size={18} /></button>
-                                        <button onClick={() => handleDelete(cat.id)} className="text-red-600 hover:text-red-800" title="Excluir"><Trash2 size={18} /></button>
-                                    </td>
+            <div className="space-y-12 animate-in fade-in duration-500">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                    <div>
+                    <h2 className="text-5xl font-black text-gray-900 tracking-tight italic">Tags</h2>
+                    <p className="text-teal-600 font-black uppercase text-[10px] tracking-[0.3em] mt-2 ml-1">Categorização e filtros de gastos</p>
+                    </div>
+                    <button 
+                    onClick={() => { setEditingCategory(null); setIsModalOpen(true); }}
+                    className="w-full md:w-auto bg-teal-500 text-white px-10 py-5 rounded-[24px] font-black text-lg hover:bg-teal-600 shadow-2xl shadow-teal-200 transition-all flex items-center justify-center gap-3 active:scale-95 italic"
+                    >
+                    <Plus size={24}/> Nova Tag
+                    </button>
+                </header>
+
+                {loading ? <p>Carregando categorias...</p> : (
+                    <div className="bg-white rounded-[56px] shadow-sm border border-teal-50 overflow-hidden">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-teal-50/30 text-[10px] font-black text-teal-800 uppercase tracking-[0.3em]">
+                                <th className="py-8 px-12">Nome da Tag</th>
+                                <th className="py-8 px-12 text-right">Controles</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                            </thead>
+                            <tbody>
+                                {categories.map(cat => (
+                                    <tr key={cat.id} className="border-b border-teal-50/50 hover:bg-teal-50/10 transition-colors group">
+                                        <td className="py-8 px-12">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-4 h-4 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform shadow-emerald-100 shadow-xl"></div>
+                                            <span className="font-black text-gray-800 text-2xl tracking-tight">{cat.name}</span>
+                                        </div>
+                                        </td>
+                                        <td className="py-8 px-12 text-right">
+                                        <div className="flex justify-end gap-4 opacity-0 group-hover:opacity-100 transition-all">
+                                            <button 
+                                                onClick={() => { setEditingCategory(cat); setIsModalOpen(true); }}
+                                                className="p-4 bg-teal-50 text-teal-500 rounded-[20px] hover:bg-teal-500 hover:text-white transition-all shadow-sm active:scale-90"
+                                            >
+                                                <Pencil size={22}/>
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(cat.id)}
+                                                className="p-4 bg-red-50 text-red-400 rounded-[20px] hover:bg-red-500 hover:text-white transition-all shadow-sm active:scale-90"
+                                            >
+                                                <Trash2 size={22}/></button>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </>
     );
 };
